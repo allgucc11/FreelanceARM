@@ -1,0 +1,113 @@
+@startuml
+' FreelanceARM — UML-диаграмма классов
+' Упрощенная версия для видео и отчета
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #607086
+skinparam ArrowThickness 1.2
+skinparam ClassBorderColor #334155
+skinparam ClassBackgroundColor white
+skinparam ClassFontColor #111827
+
+title FreelanceARM — UML диаграмма классов
+
+class MainWindow {
+  - currentUserLogin : QString
+  - currentRole : QString
+  --
+  + showLoginWindow()
+  + showBuyerInterface()
+  + showFreelancerInterface()
+  + showProfileWindow()
+  + refreshFreelancers()
+  + startOrder()
+  + finishOrder()
+  + sendMessage()
+}
+
+class DataStorage {
+  + loadUsers() / saveUsers()
+  + loadFreelancers() / saveFreelancers()
+  + loadOrders() / saveOrders()
+  + loadMessages() / saveMessages()
+}
+
+class SearchService {
+  + findFreelancers()
+  + skillMatches()
+  + timeMatches()
+  + sortByRatingAndMatch()
+}
+
+class User {
+  + username : QString
+  + login : QString
+  + passwordHash : QString
+  + photoPath : QString
+  + purchasesCount : int
+  + completedOrdersCount : int
+  + deleted : bool
+}
+
+class BuyerTask {
+  + buyerLogin : QString
+  + requiredSkill : QString
+  + budget : double
+  + requiredTime : QString
+}
+
+class FreelancerProfile {
+  + ownerLogin : QString
+  + skills : QString
+  + hourlyRate : double
+  + workTime : QString
+  + description : QString
+  + deleted : bool
+}
+
+class Order {
+  + id : QString
+  + buyerLogin : QString
+  + freelancerLogin : QString
+  + status : QString
+  + rating : int
+}
+
+class ChatMessage {
+  + orderId : QString
+  + senderLogin : QString
+  + text : QString
+  + dateTime : QString
+  + filePath : QString
+  + systemMessage : bool
+}
+
+MainWindow ..> DataStorage : использует
+MainWindow ..> SearchService : использует
+MainWindow ..> Order : управляет
+MainWindow ..> ChatMessage : отображает
+
+User "1" --> "0..1" FreelancerProfile : имеет анкету
+User "1" --> "0..*" BuyerTask : создает
+User "1" --> "0..*" Order : участвует
+BuyerTask --> FreelancerProfile : подбор
+Order "1" --> "0..*" ChatMessage : содержит
+
+SearchService ..> BuyerTask : анализ задачи
+SearchService ..> FreelancerProfile : сравнение анкет
+
+DataStorage ..> User : users.json
+DataStorage ..> FreelancerProfile : freelancers.json
+DataStorage ..> Order : orders.json
+DataStorage ..> ChatMessage : chat_messages.json
+
+legend left
+  Сплошная линия — основная связь
+  Пунктир — использование / хранение
+endlegend
+
+@enduml
